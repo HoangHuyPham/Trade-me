@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "trademe:block/anvil_revamp_block",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "trademe:block/anvil_revamp_block",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "trademe:block/anvil_revamp_block"
+    },
+    "facing=west": {
+      "model": "trademe:block/anvil_revamp_block",
+      "y": 90
+    }
+  }
+}

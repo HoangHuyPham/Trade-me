@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "i": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "o": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "pattern": [
+    "III",
+    " o ",
+    "iii"
+  ],
+  "result": {
+    "item": "trademe:anvil_revamp_block"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,19 @@
+{
+  "trademe.general_tab": "Trade Me",
+
+  "trademe.exchange_block_entity": "Exchange",
+
+  "block.trademe.exchange_block": "Khối quy đổi",
+
+  "block.trademe.lucky_block": "Khối may mắn",
+
+  "block.trademe.anvil_revamp_block": "Anvil (Làm lại)",
+
+  "item.trademe.ticket_item": "Vé may mắn",
+
+  "item.trademe.ticket_item.tooltip": "Dùng để đổi lấy thứ gì đó",
+
+  "item.trademe.anvil_revamp_block.tooltip": "Vẫn là đe nhưng không giới hạn cấp độ phù phép",
+
+  "item.trademe.lucky_block.tooltip": "Phá nó để nhận vật phẩm bí ẩn"
+}

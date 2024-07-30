@@ -1,0 +1,19 @@
+{
+  "trademe.general_tab": "Trade Me",
+
+  "trademe.exchange_block_entity": "Exchange",
+
+  "block.trademe.exchange_block": "Exchange Block",
+
+  "block.trademe.lucky_block": "Lucky Block",
+
+  "block.trademe.anvil_revamp_block": "Anvil (Revamp)",
+
+  "item.trademe.ticket_item": "Lucky ticket",
+
+  "item.trademe.ticket_item.tooltip": "Use to exchange something",
+
+  "item.trademe.anvil_revamp_block.tooltip": "Anvil but no enchantment level limit",
+
+  "item.trademe.lucky_block.tooltip": "Break it to get mysterious items"
+}

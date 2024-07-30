@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_anvil",
+  "texture_size": [16, 16],
+  "textures": {
+    "top": "trademe:block/anvil_revamp_top"
+  }
+}
