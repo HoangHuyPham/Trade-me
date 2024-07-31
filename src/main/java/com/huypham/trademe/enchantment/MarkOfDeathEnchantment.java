@@ -22,14 +22,18 @@ public class MarkOfDeathEnchantment extends Enchantment {
 
     @Override
     public void doPostAttack(LivingEntity pAttacker, Entity pTarget, int pLevel) {
-        int second = 30;
+        int second = 20;
         if (!pAttacker.level().isClientSide()) {
             if (pTarget instanceof LivingEntity){
-                ((Mob) pTarget).addEffect(new MobEffectInstance(Effects.MARK_OF_DEATH.get(), 20 * second, pLevel-1));
+                LivingEntity target = (LivingEntity) pTarget;
+                if (!target.hasEffect(Effects.MARK_OF_DEATH.get())){
+                    target.addEffect(new MobEffectInstance(Effects.MARK_OF_DEATH.get(), 20 * second, pLevel-1));
+                }
             }
         }
         super.doPostAttack(pAttacker, pTarget, pLevel);
     }
+
 
     @Override
     public boolean isTradeable() {
@@ -48,6 +52,6 @@ public class MarkOfDeathEnchantment extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return 255;
+        return 11;
     }
 }
