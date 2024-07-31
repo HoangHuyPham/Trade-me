@@ -15,5 +15,9 @@
 
   "item.trademe.anvil_revamp_block.tooltip": "Vẫn là đe nhưng không giới hạn cấp độ phù phép",
 
-  "item.trademe.lucky_block.tooltip": "Phá nó để nhận vật phẩm bí ẩn"
+  "item.trademe.lucky_block.tooltip": "Phá nó để nhận vật phẩm bí ẩn",
+
+  "potion.effect.message.mark_of_death": "Dấu ấn tử thần",
+
+  "enchantment.trademe.mark_of_death_enchantment": "Phù phép dấu ấn tử thần"
 }

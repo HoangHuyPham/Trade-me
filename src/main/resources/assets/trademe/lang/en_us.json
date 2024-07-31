@@ -15,5 +15,9 @@
 
   "item.trademe.anvil_revamp_block.tooltip": "Anvil but no enchantment level limit",
 
-  "item.trademe.lucky_block.tooltip": "Break it to get mysterious items"
+  "item.trademe.lucky_block.tooltip": "Break it to get mysterious items",
+
+  "effect.trademe.message.mark_of_death": "Mark Of Death",
+
+  "enchantment.trademe.mark_of_death_enchantment": "Mark Of Death Enchantment"
 }

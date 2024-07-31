@@ -1,6 +1,7 @@
 package com.huypham.trademe.client.screen;
 
 
+import com.huypham.trademe.container.AnvilRevampMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -18,13 +19,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class AnvilRevampScreen extends ItemCombinerScreen<AnvilMenu> {
+public class AnvilRevampScreen extends ItemCombinerScreen<AnvilRevampMenu> {
     private static final ResourceLocation ANVIL_LOCATION = new ResourceLocation("textures/gui/container/anvil.png");
     private static final Component TOO_EXPENSIVE_TEXT = Component.translatable("container.repair.expensive");
     private EditBox name;
     private final Player player;
 
-    public AnvilRevampScreen(AnvilMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+    public AnvilRevampScreen(AnvilRevampMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle, ANVIL_LOCATION);
         this.player = pPlayerInventory.player;
         this.titleLabelX = 60;

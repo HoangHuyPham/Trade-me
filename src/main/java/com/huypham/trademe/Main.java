@@ -5,21 +5,15 @@ import com.huypham.trademe.block.entity.BlockEntities;
 import com.huypham.trademe.client.screen.AnvilRevampScreen;
 import com.huypham.trademe.client.screen.ExchangeBlockScreen;
 import com.huypham.trademe.container.Containers;
-import com.huypham.trademe.helper.Utils;
+import com.huypham.trademe.effect.Effects;
+import com.huypham.trademe.enchantment.Enchantments;
 import com.huypham.trademe.item.Items;
 import com.huypham.trademe.tab.creative.Tabs;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.inventory.AnvilScreen;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,6 +35,9 @@ public class Main
         Tabs.register(modEventBus);
         BlockEntities.register(modEventBus);
         Containers.register(modEventBus);
+        Effects.register(modEventBus);
+        Enchantments.register(modEventBus);
+
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

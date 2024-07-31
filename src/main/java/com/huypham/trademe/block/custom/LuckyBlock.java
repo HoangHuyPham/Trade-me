@@ -92,6 +92,7 @@ public class LuckyBlock extends Block {
         nonProtectEnchantments.add(Enchantments.UNBREAKING);
         nonProtectEnchantments.add(Enchantments.IMPALING);
         nonProtectEnchantments.add(Enchantments.FISHING_LUCK);
+        nonProtectEnchantments.add(com.huypham.trademe.enchantment.Enchantments.MARK_OF_DEATH_ENCHANTMENT.get());
         Random rd = new Random();
         if (rd.nextInt(1, 11) == 4){
             list.add(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(nonProtectEnchantments.get(rd.nextInt(nonProtectEnchantments.size())), rd.nextInt(6, 11))));
