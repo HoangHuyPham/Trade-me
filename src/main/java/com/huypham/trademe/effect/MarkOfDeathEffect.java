@@ -2,6 +2,10 @@ package com.huypham.trademe.effect;
 
 import com.huypham.trademe.helper.DevLog;
 import com.huypham.trademe.model.MarkOfDeathData;
+import com.huypham.trademe.particle.Particles;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,6 +42,14 @@ public class MarkOfDeathEffect extends MobEffect {
             store.get(pLivingEntity).setSnapShotHealth(pLivingEntity.getHealth());
         }
 
+        if (this.lastTick % 30 == 0){
+            if (pLivingEntity.getHealth() <= store.get(pLivingEntity).getBonusDamage()){
+                if ((pLivingEntity.level() instanceof ServerLevel))
+                    ((ServerLevel)pLivingEntity.level()).sendParticles(Particles.MARK_OF_DEATH_PARTICLE.get(), pLivingEntity.getX(), pLivingEntity.getY()+0.5, pLivingEntity.getZ(), 1, 0, 0.1, 0.1, 0.1);
+
+            }
+        }
+
         if (this.lastTick <= 1){
             float storeBonusDamage = 0;
             if (pLivingEntity.getHealth() <= store.get(pLivingEntity).getBonusDamage()){
@@ -48,6 +60,7 @@ public class MarkOfDeathEffect extends MobEffect {
                 pLivingEntity.hurt(pLivingEntity.damageSources().magic(), store.get(pLivingEntity).getBonusDamage());
                 store.remove(pLivingEntity);
             }
+
         }
         super.applyEffectTick(pLivingEntity, pAmplifier);
     }
