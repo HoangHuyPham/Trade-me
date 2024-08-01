@@ -52,6 +52,6 @@ public class MarkOfDeathEnchantment extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return 11;
+        return 10;
     }
 }

@@ -23,16 +23,16 @@ public class MarkOfDeathParticle extends TextureSheetParticle {
     public void tick() {
         super.tick();
         this.setSpriteFromAge(spriteSet);
-        fadeOut();
+//        fadeOut();
     }
 
     public float getQuadSize(float pScaleFactor) {
         return 1.2f;
     }
 
-    public void fadeOut(){
-        this.alpha = (-(1/ (float)lifetime) * age + 1);
-    }
+//    public void fadeOut(){
+//        this.alpha = (-(1/ (float)lifetime) * age + 1);
+//    }
 
 
     @Override

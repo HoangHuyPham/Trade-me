@@ -220,11 +220,11 @@ publishing {
             artifact jar
         }
     }
-//    repositories {
-//        maven {
-//            url "file://${project.projectDir}/mcmodsrepo"
-//        }
-//    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {

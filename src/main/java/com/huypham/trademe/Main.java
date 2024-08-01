@@ -14,11 +14,14 @@ import com.huypham.trademe.tab.creative.Tabs;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.inventory.FurnaceScreen;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SmokeParticle;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.ParticleUtils;
+import net.minecraft.world.inventory.FurnaceFuelSlot;
+import net.minecraft.world.inventory.FurnaceMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -57,8 +60,6 @@ public class Main
 
     @SubscribeEvent
     public void hi(PlayerInteractEvent.RightClickBlock event){
-        System.out.println("hi");
-//        event.getLevel().addAlwaysVisibleParticle(Particles.MARK_OF_DEATH_PARTICLE.get(), event.getEntity().getX(), event.getEntity().getY()+1, event.getEntity().getZ(), 0.25, 0.25, 0.25);
 
     }
 
@@ -83,9 +84,7 @@ public class Main
         @SubscribeEvent
         public static void registerParticleFactories(RegisterParticleProvidersEvent event)
         {
-//            Minecraft.getInstance().particleEngine.register(Particles.MARK_OF_DEATH_PARTICLE.get(), MarkOfDeathParticle.Provider::new);
             event.registerSpriteSet(Particles.MARK_OF_DEATH_PARTICLE.get(), MarkOfDeathParticle.Provider::new);
-
         }
     }
 }
