@@ -8,8 +8,10 @@ import com.huypham.trademe.container.Containers;
 import com.huypham.trademe.effect.Effects;
 import com.huypham.trademe.enchantment.Enchantments;
 import com.huypham.trademe.item.Items;
+import com.huypham.trademe.particle.MarkOfDeathLastParticle;
 import com.huypham.trademe.particle.MarkOfDeathParticle;
 import com.huypham.trademe.particle.Particles;
+import com.huypham.trademe.sound.Sounds;
 import com.huypham.trademe.tab.creative.Tabs;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -53,6 +55,7 @@ public class Main
         Effects.register(modEventBus);
         Enchantments.register(modEventBus);
         Particles.register(modEventBus);
+        Sounds.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -85,6 +88,7 @@ public class Main
         public static void registerParticleFactories(RegisterParticleProvidersEvent event)
         {
             event.registerSpriteSet(Particles.MARK_OF_DEATH_PARTICLE.get(), MarkOfDeathParticle.Provider::new);
+            event.registerSpriteSet(Particles.MARK_OF_DEATH_LAST_PARTICLE.get(), MarkOfDeathLastParticle.Provider::new);
         }
     }
 }

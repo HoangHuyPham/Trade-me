@@ -16,6 +16,9 @@ public class Particles {
 
     public static final RegistryObject<SimpleParticleType> MARK_OF_DEATH_PARTICLE = PARTICLES.register("mark_of_death_particle", ()->new SimpleParticleType(true));
 
+    public static final RegistryObject<SimpleParticleType> MARK_OF_DEATH_LAST_PARTICLE = PARTICLES.register("mark_of_death_last_particle", ()->new SimpleParticleType(true));
+
+
     public static void register(IEventBus eventBus) {
         PARTICLES.register(eventBus);
 
