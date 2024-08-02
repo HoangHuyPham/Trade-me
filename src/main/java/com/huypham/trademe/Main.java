@@ -7,6 +7,7 @@ import com.huypham.trademe.client.screen.ExchangeBlockScreen;
 import com.huypham.trademe.container.MenuTypes;
 import com.huypham.trademe.effect.Effects;
 import com.huypham.trademe.enchantment.Enchantments;
+import com.huypham.trademe.helper.DevLog;
 import com.huypham.trademe.item.Items;
 import com.huypham.trademe.particle.MarkOfDeathLastParticle;
 import com.huypham.trademe.particle.MarkOfDeathParticle;
@@ -16,10 +17,16 @@ import com.huypham.trademe.tab.creative.Tabs;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,14 +34,18 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 @Mod(Main.MODID)
-public class Main
-{
+public class Main {
     public static final String MODID = "trademe";
     private static final Logger LOGGER = LogUtils.getLogger();
+    public static final List<Item> items = new ArrayList<>();
+    public static final HashMap<Integer, Registry<Item>> ITEM_REGISTRY = new HashMap<>();
 
-    public Main()
-    {
+    public Main() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         Blocks.register(modEventBus);
         Items.register(modEventBus);
@@ -51,22 +62,31 @@ public class Main
     }
 
     @SubscribeEvent
-    public void hi(PlayerInteractEvent.RightClickBlock event){
+    void onFMLLoadCompleteEvent(ServerStartedEvent event) {
+        MinecraftServer server = event.getServer();
+        ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM));
+        var items0 = ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM)).keySet().toArray(new ResourceLocation[0]);
+        for (var item : items0) {
+            items.add(ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM)).get(item));
+        }
+        DevLog.print(this, "Load item complete!");
+    }
+
+    @SubscribeEvent
+    public void hi(PlayerInteractEvent.RightClickBlock event) {
 
     }
 
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
+    public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
+        public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             event.enqueueWork(
-                    ()->{
+                    () -> {
                         MenuScreens.register(MenuTypes.EXCHANGE_BLOCK_MENU.get(), ExchangeBlockScreen::new);
                         MenuScreens.register(MenuTypes.ANVIL_REVAMP_BLOCK_MENU.get(), AnvilRevampScreen::new);
                     }
@@ -74,8 +94,7 @@ public class Main
         }
 
         @SubscribeEvent
-        public static void registerParticleFactories(RegisterParticleProvidersEvent event)
-        {
+        public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(Particles.MARK_OF_DEATH_PARTICLE.get(), MarkOfDeathParticle.Provider::new);
             event.registerSpriteSet(Particles.MARK_OF_DEATH_LAST_PARTICLE.get(), MarkOfDeathLastParticle.Provider::new);
         }
