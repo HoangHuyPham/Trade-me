@@ -48,7 +48,7 @@ public class AnvilRevampMenu extends ItemCombinerMenu {
     }
 
     public AnvilRevampMenu(int pContainerId, Inventory pPlayerInventory, ContainerLevelAccess pAccess) {
-        super(Containers.ANVIL_REVAMP_BLOCK_MENU.get(), pContainerId, pPlayerInventory, pAccess);
+        super(MenuTypes.ANVIL_REVAMP_BLOCK_MENU.get(), pContainerId, pPlayerInventory, pAccess);
         this.addDataSlot(this.cost);
     }
 

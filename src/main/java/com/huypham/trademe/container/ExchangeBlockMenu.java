@@ -13,7 +13,7 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
     private final Container container;
 
     public ExchangeBlockMenu(int containerId, Inventory playerInv, Container container) {
-        super(Containers.EXCHANGE_BLOCK_MENU.get(), containerId);
+        super(MenuTypes.EXCHANGE_BLOCK_MENU.get(), containerId);
         this.container = container;
 
         addSlot(new Slot(this.container, 0, 36, 20));
