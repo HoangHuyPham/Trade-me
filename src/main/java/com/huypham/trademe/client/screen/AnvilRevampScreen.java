@@ -5,6 +5,7 @@ import com.huypham.trademe.container.AnvilRevampMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AnvilScreen;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundRenameItemPacket;
@@ -140,9 +141,8 @@ public class AnvilRevampScreen extends ItemCombinerScreen<AnvilRevampMenu> {
     public void slotChanged(AbstractContainerMenu pContainerToSend, int pSlotInd, ItemStack pStack) {
         if (pSlotInd == 0) {
             this.name.setValue(pStack.isEmpty() ? "" : pStack.getHoverName().getString());
-            this.name.setEditable(!pStack.isEmpty());
-            this.setFocused(this.name);
+//            this.name.setEditable(!pStack.isEmpty());
+//            this.setFocused(this.name);
         }
-
     }
 }

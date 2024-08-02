@@ -16,7 +16,7 @@ public class Containers {
 
     public static final RegistryObject<MenuType<ExchangeBlockMenu>> EXCHANGE_BLOCK_MENU = CONTAINERS.register("exchange_block_menu", ()-> new MenuType<>((pContainerId, pPlayerInventory) -> new ExchangeBlockMenu(pContainerId, pPlayerInventory, new SimpleContainer(2)), FeatureFlags.DEFAULT_FLAGS));
 
-    public static final RegistryObject<MenuType<AnvilRevampMenu>> ANVIL_REVAMP_BLOCK_MENU = CONTAINERS.register("anvil_revamp_block_menu",()-> new MenuType<>(AnvilRevampMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final RegistryObject<MenuType<AnvilRevampMenu>> ANVIL_REVAMP_BLOCK_MENU = CONTAINERS.register("anvil_revamp_block_menu",()-> new MenuType<>((AnvilRevampMenu::new), FeatureFlags.DEFAULT_FLAGS));
 
     public static void register(IEventBus eventBus) {
         CONTAINERS.register(eventBus);

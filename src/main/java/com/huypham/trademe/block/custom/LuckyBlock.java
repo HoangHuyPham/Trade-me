@@ -2,7 +2,7 @@ package com.huypham.trademe.block.custom;
 
 import com.huypham.trademe.helper.DevLog;
 import com.huypham.trademe.helper.Utils;
-import com.huypham.trademe.sound.SoundTypes;
+import com.huypham.trademe.sound.Sounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -108,6 +108,6 @@ public class LuckyBlock extends Block {
 
     @Override
     public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
-        return SoundTypes.LUCKY_BLOCK_SOUND;
+        return Sounds.LUCKY_BLOCK_SOUND;
     }
 }

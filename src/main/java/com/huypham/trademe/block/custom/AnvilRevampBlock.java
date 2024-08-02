@@ -49,7 +49,7 @@ public class AnvilRevampBlock extends FallingBlock {
     private static final VoxelShape Z_TOP = Block.box(3.0D, 10.0D, 0.0D, 13.0D, 16.0D, 16.0D);
     private static final VoxelShape X_AXIS_AABB = Shapes.or(BASE, X_LEG1, X_LEG2, X_TOP);
     private static final VoxelShape Z_AXIS_AABB = Shapes.or(BASE, Z_LEG1, Z_LEG2, Z_TOP);
-    private static final Component CONTAINER_TITLE = Component.translatable("container.repair");
+    private static final Component CONTAINER_TITLE = Component.translatable("block.trademe.anvil_revamp_block.title");
     private static final float FALL_DAMAGE_PER_DISTANCE = 2.0F;
     private static final int FALL_DAMAGE_MAX = 40;
 
@@ -74,11 +74,12 @@ public class AnvilRevampBlock extends FallingBlock {
         }
     }
 
+
     @Nullable
     public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
-        return new SimpleMenuProvider((p_48785_, p_48786_, p_48787_) -> {
-            return new AnvilRevampMenu(p_48785_, p_48786_);
-        }, CONTAINER_TITLE);
+            return new SimpleMenuProvider((p_48785_, p_48786_, p_48787_) -> {
+                return new AnvilRevampMenu(p_48785_, p_48786_, ContainerLevelAccess.create(pLevel, pPos));
+            }, CONTAINER_TITLE);
     }
 
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
@@ -138,6 +139,7 @@ public class AnvilRevampBlock extends FallingBlock {
     public int getDustColor(BlockState pState, BlockGetter pReader, BlockPos pPos) {
         return pState.getMapColor(pReader, pPos).col;
     }
+
 
 
 }

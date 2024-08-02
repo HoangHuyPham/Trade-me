@@ -1,40 +1,129 @@
 package com.huypham.trademe.container;
 
+import com.huypham.trademe.block.custom.Blocks;
+import com.mojang.logging.LogUtils;
+import net.minecraft.SharedConstants;
 import net.minecraft.Util;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import org.slf4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
-public class AnvilRevampMenu extends AnvilMenu {
+public class AnvilRevampMenu extends ItemCombinerMenu {
+    public static final int INPUT_SLOT = 0;
+    public static final int ADDITIONAL_SLOT = 1;
+    public static final int RESULT_SLOT = 2;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final boolean DEBUG_COST = false;
+    public static final int MAX_NAME_LENGTH = 50;
+    public int repairItemCountCost;
     private String itemName;
+    private final DataSlot cost = DataSlot.standalone();
+    private static final int COST_FAIL = 0;
+    private static final int COST_BASE = 1;
+    private static final int COST_ADDED_BASE = 1;
+    private static final int COST_REPAIR_MATERIAL = 1;
+    private static final int COST_REPAIR_SACRIFICE = 2;
+    private static final int COST_INCOMPATIBLE_PENALTY = 1;
+    private static final int COST_RENAME = 1;
+    private static final int INPUT_SLOT_X_PLACEMENT = 27;
+    private static final int ADDITIONAL_SLOT_X_PLACEMENT = 76;
+    private static final int RESULT_SLOT_X_PLACEMENT = 134;
+    private static final int SLOT_Y_PLACEMENT = 47;
+
     public AnvilRevampMenu(int pContainerId, Inventory pPlayerInventory) {
-        super(pContainerId, pPlayerInventory);
+        this(pContainerId, pPlayerInventory, ContainerLevelAccess.NULL);
     }
 
     public AnvilRevampMenu(int pContainerId, Inventory pPlayerInventory, ContainerLevelAccess pAccess) {
-        super(pContainerId,pPlayerInventory ,pAccess);
+        super(Containers.ANVIL_REVAMP_BLOCK_MENU.get(), pContainerId, pPlayerInventory, pAccess);
+        this.addDataSlot(this.cost);
+    }
+
+    protected ItemCombinerMenuSlotDefinition createInputSlotDefinitions() {
+        return ItemCombinerMenuSlotDefinition.create().withSlot(0, 27, 47, (p_266635_) -> {
+            return true;
+        }).withSlot(1, 76, 47, (p_266634_) -> {
+            return true;
+        }).withResultSlot(2, 134, 47).build();
     }
 
     @Override
+    public boolean stillValid(Player pPlayer) {
+        return AbstractContainerMenu.stillValid(this.access, player, Blocks.ANVIL_BLOCK_REVAMP.get());
+    }
+
+    protected boolean isValidBlock(BlockState pState) {
+        return pState.is(BlockTags.ANVIL);
+    }
+
+    protected boolean mayPickup(Player pPlayer, boolean pHasStack) {
+        return (pPlayer.getAbilities().instabuild || pPlayer.experienceLevel >= this.cost.get()) && this.cost.get() > 0;
+    }
+
+    protected void onTake(Player pPlayer, ItemStack pStack) {
+        if (!pPlayer.getAbilities().instabuild) {
+            pPlayer.giveExperienceLevels(-this.cost.get());
+        }
+
+        float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(pPlayer, pStack, AnvilRevampMenu.this.inputSlots.getItem(0), AnvilRevampMenu.this.inputSlots.getItem(1));
+
+        this.inputSlots.setItem(0, ItemStack.EMPTY);
+        if (this.repairItemCountCost > 0) {
+            ItemStack itemstack = this.inputSlots.getItem(1);
+            if (!itemstack.isEmpty() && itemstack.getCount() > this.repairItemCountCost) {
+                itemstack.shrink(this.repairItemCountCost);
+                this.inputSlots.setItem(1, itemstack);
+            } else {
+                this.inputSlots.setItem(1, ItemStack.EMPTY);
+            }
+        } else {
+            this.inputSlots.setItem(1, ItemStack.EMPTY);
+        }
+
+        this.cost.set(0);
+        this.access.execute((p_150479_, p_150480_) -> {
+            BlockState blockstate = p_150479_.getBlockState(p_150480_);
+            if (!pPlayer.getAbilities().instabuild && blockstate.is(BlockTags.ANVIL) && pPlayer.getRandom().nextFloat() < breakChance) {
+                BlockState blockstate1 = AnvilBlock.damage(blockstate);
+                if (blockstate1 == null) {
+                    p_150479_.removeBlock(p_150480_, false);
+                    p_150479_.levelEvent(1029, p_150480_, 0);
+                } else {
+                    p_150479_.setBlock(p_150480_, blockstate1, 2);
+                    p_150479_.levelEvent(1030, p_150480_, 0);
+                }
+            } else {
+                p_150479_.levelEvent(1030, p_150480_, 0);
+            }
+
+        });
+    }
+
+    /**
+     * Called when the Anvil Input Slot changes, calculates the new result and puts it in the output slot.
+     */
     public void createResult() {
         ItemStack itemstack = this.inputSlots.getItem(0);
-        this.setMaximumCost(1);
+        this.cost.set(1);
         int i = 0;
         int j = 0;
         int k = 0;
         if (itemstack.isEmpty()) {
             this.resultSlots.setItem(0, ItemStack.EMPTY);
-            this.setMaximumCost(0);
+            this.cost.set(0);
         } else {
             ItemStack itemstack1 = itemstack.copy();
             ItemStack itemstack2 = this.inputSlots.getItem(1);
@@ -43,14 +132,15 @@ public class AnvilRevampMenu extends AnvilMenu {
             this.repairItemCountCost = 0;
             boolean flag = false;
 
-            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, resultSlots, itemName, j, this.player)) return;
+//            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(null, itemstack, itemstack2, resultSlots, itemName, j, this.player)) return;
+
             if (!itemstack2.isEmpty()) {
                 flag = itemstack2.getItem() == Items.ENCHANTED_BOOK && !EnchantedBookItem.getEnchantments(itemstack2).isEmpty();
                 if (itemstack1.isDamageableItem() && itemstack1.getItem().isValidRepairItem(itemstack, itemstack2)) {
                     int l2 = Math.min(itemstack1.getDamageValue(), itemstack1.getMaxDamage() / 4);
                     if (l2 <= 0) {
                         this.resultSlots.setItem(0, ItemStack.EMPTY);
-                        this.setMaximumCost(0);
+                        this.cost.set(0);
                         return;
                     }
 
@@ -66,7 +156,7 @@ public class AnvilRevampMenu extends AnvilMenu {
                 } else {
                     if (!flag && (!itemstack1.is(itemstack2.getItem()) || !itemstack1.isDamageableItem())) {
                         this.resultSlots.setItem(0, ItemStack.EMPTY);
-                        this.setMaximumCost(0);
+                        this.cost.set(0);
                         return;
                     }
 
@@ -145,7 +235,7 @@ public class AnvilRevampMenu extends AnvilMenu {
 
                     if (flag3 && !flag2) {
                         this.resultSlots.setItem(0, ItemStack.EMPTY);
-                        this.setMaximumCost(0);
+                        this.cost.set(0);
                         return;
                     }
                 }
@@ -164,16 +254,16 @@ public class AnvilRevampMenu extends AnvilMenu {
             }
             if (flag && !itemstack1.isBookEnchantable(itemstack2)) itemstack1 = ItemStack.EMPTY;
 
-            this.setMaximumCost(j + i);
+            this.cost.set(j + i);
             if (i <= 0) {
                 itemstack1 = ItemStack.EMPTY;
             }
 
-            if (k == i && k > 0 && this.getCost() >= 40) {
-                this.setMaximumCost(39);
+            if (k == i && k > 0 && this.cost.get() >= 40) {
+                this.cost.set(39);
             }
 
-            if (this.getCost() >= 40 && !this.player.getAbilities().instabuild) {
+            if (this.cost.get() >= 40 && !this.player.getAbilities().instabuild) {
                 itemstack1 = ItemStack.EMPTY;
             }
 
@@ -195,4 +285,46 @@ public class AnvilRevampMenu extends AnvilMenu {
             this.broadcastChanges();
         }
     }
+
+    public static int calculateIncreasedRepairCost(int pOldRepairCost) {
+        return pOldRepairCost * 2 + 1;
+    }
+
+    public boolean setItemName(String pItemName) {
+        String s = validateName(pItemName);
+        if (s != null && !s.equals(this.itemName)) {
+            this.itemName = s;
+            if (this.getSlot(2).hasItem()) {
+                ItemStack itemstack = this.getSlot(2).getItem();
+                if (Util.isBlank(s)) {
+                    itemstack.resetHoverName();
+                } else {
+                    itemstack.setHoverName(Component.literal(s));
+                }
+            }
+
+            this.createResult();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Nullable
+    private static String validateName(String pItemName) {
+        String s = SharedConstants.filterText(pItemName);
+        return s.length() <= 50 ? s : null;
+    }
+
+    /**
+     * Gets the maximum xp cost
+     */
+    public int getCost() {
+        return this.cost.get();
+    }
+
+    public void setMaximumCost(int value) {
+        this.cost.set(value);
+    }
 }
+

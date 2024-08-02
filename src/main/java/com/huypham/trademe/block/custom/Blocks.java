@@ -19,8 +19,7 @@ public class Blocks {
 
     public static final RegistryObject<Block> LUCKY_BLOCK = BLOCKS.register("lucky_block", LuckyBlock::new);
 
-    public static final RegistryObject<Block> ANVIL_BLOCK_REVAMP = BLOCKS.register("anvil_revamp_block", ()->new AnvilRevampBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 1200.0F).sound(SoundType.ANVIL).pushReaction(PushReaction.BLOCK)));
-
+    public static final RegistryObject<Block> ANVIL_BLOCK_REVAMP = BLOCKS.register("anvil_revamp_block", ()->new AnvilRevampBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, 1200.0F).requiresCorrectToolForDrops().sound(SoundType.ANVIL).pushReaction(PushReaction.BLOCK)));
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
