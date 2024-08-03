@@ -9,6 +9,7 @@ import com.huypham.trademe.effect.Effects;
 import com.huypham.trademe.enchantment.Enchantments;
 import com.huypham.trademe.helper.DevLog;
 import com.huypham.trademe.item.Items;
+import com.huypham.trademe.message.MSGExchangeItem;
 import com.huypham.trademe.particle.MarkOfDeathLastParticle;
 import com.huypham.trademe.particle.MarkOfDeathParticle;
 import com.huypham.trademe.particle.Particles;
@@ -21,6 +22,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -31,7 +33,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -44,6 +50,14 @@ public class Main {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final List<Item> items = new ArrayList<>();
     public static final HashMap<Integer, Registry<Item>> ITEM_REGISTRY = new HashMap<>();
+    private static final String PROTOCOL_VERSION = "1";
+    private static int packetsRegistered;
+    public static final SimpleChannel MAIN_NETWORK = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(MODID, "main_channel"),
+            () -> PROTOCOL_VERSION,
+            PROTOCOL_VERSION::equals,
+            PROTOCOL_VERSION::equals
+    );
 
     public Main() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -57,8 +71,19 @@ public class Main {
         Particles.register(modEventBus);
         Sounds.register(modEventBus);
 
-        // Register ourselves for server and other game events we are interested in
+        modEventBus.addListener(this::onSetup);
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    public static <MSG> void sendMSGToServer(MSG message) {
+        MAIN_NETWORK.sendToServer(message);
+    }
+
+
+
+    void onSetup(FMLCommonSetupEvent event) {
+        MAIN_NETWORK.registerMessage(packetsRegistered++, MSGExchangeItem.class, MSGExchangeItem::encode, MSGExchangeItem::decode, MSGExchangeItem::handle);
+        DevLog.print(this, "All messages is registered");
     }
 
     @SubscribeEvent
@@ -74,7 +99,7 @@ public class Main {
 
     @SubscribeEvent
     public void hi(PlayerInteractEvent.RightClickBlock event) {
-
+        MAIN_NETWORK.sendToServer(new MSGExchangeItem(123));
     }
 
 
