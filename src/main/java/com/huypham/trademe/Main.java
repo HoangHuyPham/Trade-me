@@ -4,6 +4,7 @@ import com.huypham.trademe.block.custom.Blocks;
 import com.huypham.trademe.block.entity.BlockEntities;
 import com.huypham.trademe.client.screen.AnvilRevampScreen;
 import com.huypham.trademe.client.screen.ExchangeBlockScreen;
+import com.huypham.trademe.config.TradeMeConfig;
 import com.huypham.trademe.container.MenuTypes;
 import com.huypham.trademe.effect.Effects;
 import com.huypham.trademe.enchantment.Enchantments;
@@ -26,12 +27,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.IConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -70,8 +76,10 @@ public class Main {
         Enchantments.register(modEventBus);
         Particles.register(modEventBus);
         Sounds.register(modEventBus);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, TradeMeConfig.SERVER_SPEC, "trademe-server.toml");
 
         modEventBus.addListener(this::onSetup);
+        modEventBus.addListener(this::onModConfigEventReloading);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -80,11 +88,15 @@ public class Main {
     }
 
 
-
     void onSetup(FMLCommonSetupEvent event) {
         MAIN_NETWORK.registerMessage(packetsRegistered++, MSGExchangeItem.class, MSGExchangeItem::encode, MSGExchangeItem::decode, MSGExchangeItem::handle);
         DevLog.print(this, "All messages is registered");
     }
+
+    void onModConfigEventReloading(ModConfigEvent.Reloading event) {
+
+    }
+
 
     @SubscribeEvent
     void onFMLLoadCompleteEvent(ServerStartedEvent event) {
@@ -94,12 +106,16 @@ public class Main {
         for (var item : items0) {
             items.add(ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM)).get(item));
         }
+
         DevLog.print(this, "Load item complete!");
     }
 
     @SubscribeEvent
     public void hi(PlayerInteractEvent.RightClickBlock event) {
-        MAIN_NETWORK.sendToServer(new MSGExchangeItem(123));
+        System.out.println(">>>" + TradeMeConfig.SERVER.exchange1.get());
+        System.out.println(">>>" + TradeMeConfig.SERVER.exchange2.get());
+        System.out.println(">>>" + TradeMeConfig.SERVER.exchange3.get());
+        System.out.println(">>>" + TradeMeConfig.SERVER.exchange4.get());
     }
 
 
