@@ -8,6 +8,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ExchangeBlockMenu extends AbstractContainerMenu {
 
     final int resultSlot = 11;
+    final int[][] exchangeTicketRatio;
 
     public ExchangeBlockMenu(int containerId, Inventory playerInv) {
         this(containerId, playerInv, new ItemStackHandler(4), null);
@@ -26,7 +28,7 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
     public ExchangeBlockMenu(int containerId, Inventory playerInv, ItemStackHandler container, Player player) {
         super(MenuTypes.EXCHANGE_BLOCK_MENU.get(), containerId);
 
-
+        this.exchangeTicketRatio = Utils.getExchangeTicketRatio();
         // Virtual container
         Container[] virtualTrade = new SimpleContainer[]{
                 new SimpleContainer(2),new SimpleContainer(2),new SimpleContainer(2),new SimpleContainer(2)
@@ -102,6 +104,7 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
             super.removed(pPlayer);
         }
     }
+
 
 
     @Override
@@ -185,6 +188,9 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
         }
 
         return quickMovedStack; // Return the slot stack
+    }
+    public int[][] getExchangeTicketRatio(){
+        return this.exchangeTicketRatio;
     }
 
     @Override

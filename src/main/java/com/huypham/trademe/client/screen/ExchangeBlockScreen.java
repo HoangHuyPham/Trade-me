@@ -97,9 +97,7 @@ public class ExchangeBlockScreen extends AbstractContainerScreen<ExchangeBlockMe
     @Override
     protected void init() {
         super.init();
-        itemStackMap.clear();
-        itemStackMap.addAll(Utils.getExchangeTable());
-        exchangeRatio = Utils.getExchangeTicketRatio();
+        exchangeRatio = getMenu().getExchangeTicketRatio();
     }
 
     @Override
