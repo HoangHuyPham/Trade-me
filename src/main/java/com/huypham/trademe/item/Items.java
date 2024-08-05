@@ -2,11 +2,9 @@ package com.huypham.trademe.item;
 
 import com.huypham.trademe.Main;
 import com.huypham.trademe.block.custom.Blocks;
-import com.huypham.trademe.enchantment.Enchantments;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;

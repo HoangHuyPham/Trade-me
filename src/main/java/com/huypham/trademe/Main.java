@@ -21,13 +21,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -35,13 +35,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.slf4j.Logger;
@@ -64,6 +62,7 @@ public class Main {
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
+    private static MinecraftServer server;
 
     public Main() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -76,6 +75,7 @@ public class Main {
         Enchantments.register(modEventBus);
         Particles.register(modEventBus);
         Sounds.register(modEventBus);
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, TradeMeConfig.SERVER_SPEC, "trademe-server.toml");
 
         modEventBus.addListener(this::onSetup);
@@ -94,13 +94,18 @@ public class Main {
     }
 
     void onModConfigEventReloading(ModConfigEvent.Reloading event) {
-
+        System.out.println("fire>>>");
+        if (server != null && event.getConfig().getSpec() == TradeMeConfig.SERVER_SPEC){
+            for (ServerPlayer player: server.getPlayerList().getPlayers()){
+                player.sendSystemMessage(Component.translatable("server.trademe.has_config_change"));
+            }
+        }
     }
 
 
     @SubscribeEvent
     void onFMLLoadCompleteEvent(ServerStartedEvent event) {
-        MinecraftServer server = event.getServer();
+        server = event.getServer();
         ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM));
         var items0 = ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM)).keySet().toArray(new ResourceLocation[0]);
         for (var item : items0) {
@@ -112,10 +117,7 @@ public class Main {
 
     @SubscribeEvent
     public void hi(PlayerInteractEvent.RightClickBlock event) {
-        System.out.println(">>>" + TradeMeConfig.SERVER.exchange1.get());
-        System.out.println(">>>" + TradeMeConfig.SERVER.exchange2.get());
-        System.out.println(">>>" + TradeMeConfig.SERVER.exchange3.get());
-        System.out.println(">>>" + TradeMeConfig.SERVER.exchange4.get());
+
     }
 
 

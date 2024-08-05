@@ -1,10 +1,5 @@
 package com.huypham.trademe.config;
 
-import com.huypham.trademe.helper.DevLog;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -21,6 +16,12 @@ public class TradeMeConfig {
     public final ForgeConfigSpec.ConfigValue<List<String>> exchange3;
     public final ForgeConfigSpec.ConfigValue<List<String>> exchange4;
 
+    public final ForgeConfigSpec.ConfigValue<List<Integer>> exchangeCommon;
+    public final ForgeConfigSpec.ConfigValue<List<Integer>> exchangeUnCommon;
+    public final ForgeConfigSpec.ConfigValue<List<Integer>> exchangeRare;
+    public final ForgeConfigSpec.ConfigValue<List<Integer>> exchangeEpic;
+    public final ForgeConfigSpec.IntValue exchangeTicket;
+
     static {
         {
             final Pair<TradeMeConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(TradeMeConfig::new);
@@ -32,15 +33,15 @@ public class TradeMeConfig {
     public TradeMeConfig(ForgeConfigSpec.Builder builder) {
         List<String> exchange1List = new ArrayList<>();
         exchange1List.add(new ItemStack(Items.NETHERITE_INGOT, 1).serializeNBT().toString());
-        exchange1List.add("{Count:5b,id:\"trademe:ticket_item\"}");
+        exchange1List.add("{Count:10b,id:\"trademe:ticket_item\"}");
 
         List<String> exchange2List = new ArrayList<>();
         exchange2List.add(new ItemStack(Items.DIAMOND, 1).serializeNBT().toString());
-        exchange2List.add("{Count:3b,id:\"trademe:ticket_item\"}");
+        exchange2List.add("{Count:2b,id:\"trademe:ticket_item\"}");
 
         List<String> exchange3List = new ArrayList<>();
         exchange3List.add(new ItemStack(Items.LAPIS_LAZULI, 1).serializeNBT().toString());
-        exchange3List.add("{Count:3b,id:\"trademe:ticket_item\"}");
+        exchange3List.add("{Count:2b,id:\"trademe:ticket_item\"}");
 
         List<String> exchange4List = new ArrayList<>();
         exchange4List.add(new ItemStack(Items.EMERALD, 5).serializeNBT().toString());
@@ -57,12 +58,25 @@ public class TradeMeConfig {
         exchange2 = builder.define("item", exchange2List);
         builder.pop();
         builder.push("Exchage3");
-        exchange3 = builder.define("item", exchange2List);
+        exchange3 = builder.define("item", exchange3List);
         builder.pop();
         builder.push("Exchage4");
-        exchange4 = builder.define("item", exchange2List);
-
+        exchange4 = builder.define("item", exchange4List);
         builder.pop();
+        builder.pop();
+
+        builder.push("ExchangeTicketRatio");
+        builder.comment("This is ratio when exchange item into ticket");
+        builder.comment("Left number is number of common items need to exchange into ticket (right number)");
+        builder.comment("Example [12, 1]; 12 is left number, 1 is right number");
+
+        exchangeCommon = builder.define("Common", List.of(12, 1));
+        exchangeUnCommon = builder.define("Uncommon", List.of(1, 1));
+        exchangeRare = builder.define("Rare", List.of(1, 2));
+        exchangeEpic = builder.define("Epic", List.of(1, 5));
+
+        builder.comment("This is number of ticket to exchange into lucky block");
+        exchangeTicket = builder.defineInRange("Ticket", 15, 1, 64);
     }
 }
 

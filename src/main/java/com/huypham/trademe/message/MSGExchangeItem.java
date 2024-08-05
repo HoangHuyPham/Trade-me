@@ -1,14 +1,14 @@
 package com.huypham.trademe.message;
 
 import com.huypham.trademe.container.ExchangeBlockMenu;
-import com.huypham.trademe.helper.DevLog;
+import com.huypham.trademe.helper.Utils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class MSGExchangeItem {
@@ -52,22 +52,20 @@ public class MSGExchangeItem {
             ServerPlayer sender = context.get().getSender();
             if (sender.containerMenu instanceof ExchangeBlockMenu){
                 Inventory inventory = sender.getInventory();
+                List<ItemStack[]> exchangeTable = Utils.getExchangeTable();
+
                 switch (message.id){
                     case 1 ->{
-                        ItemStack trade = new ItemStack(Items.NETHERITE_INGOT, 1);
-                        handleTrade(trade, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), 5), inventory);
+                        handleTrade(exchangeTable.get(0)[0], exchangeTable.get(0)[1], inventory);
                     }
                     case 2 ->{
-                        ItemStack trade = new ItemStack(Items.DIAMOND, 1);
-                        handleTrade(trade, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), 3), inventory);
+                        handleTrade(exchangeTable.get(1)[0], exchangeTable.get(1)[1], inventory);
                     }
                     case 3 ->{
-                        ItemStack trade = new ItemStack(Items.EMERALD, 1);
-                        handleTrade(trade, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), 1), inventory);
+                        handleTrade(exchangeTable.get(2)[0], exchangeTable.get(2)[1], inventory);
                     }
                     case 4 ->{
-                        ItemStack trade = new ItemStack(Items.LAPIS_LAZULI, 2);
-                        handleTrade(trade, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), 1), inventory);
+                        handleTrade(exchangeTable.get(3)[0], exchangeTable.get(3)[1], inventory);
                     }
                 }
 

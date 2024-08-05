@@ -21,5 +21,9 @@
 
   "potion.effect.message.mark_of_death": "Dấu ấn tử thần",
 
-  "enchantment.trademe.mark_of_death_enchantment": "Phù phép dấu ấn tử thần"
+  "enchantment.trademe.mark_of_death_enchantment": "Phù phép dấu ấn tử thần",
+
+  "server.trademe.has_config_change": "§e§oServer vừa thay đổi cấu hình gần đây, thay đổi UI có thể chưa được cập nhật chính xác!§r",
+
+  "tradme.ratio.info" : "Tỷ lệ trao đổi"
 }

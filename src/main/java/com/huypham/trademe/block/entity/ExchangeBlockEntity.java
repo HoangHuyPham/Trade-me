@@ -3,29 +3,41 @@ package com.huypham.trademe.block.entity;
 import com.huypham.trademe.Main;
 import com.huypham.trademe.container.ExchangeBlockMenu;
 import com.huypham.trademe.helper.DevLog;
+import com.huypham.trademe.helper.Utils;
+import com.huypham.trademe.item.Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ExchangeBlockEntity extends BlockEntity implements MenuProvider, Container {
-    final int MAX_STACK = 64;
-    public ItemStackHandler itemStackHandler = new ItemStackHandler(2) {
+public class ExchangeBlockEntity extends BlockEntity implements MenuProvider {
+    final int resultSlot = 3;
+
+    public ItemStackHandler container = new ItemStackHandler(4) {
         @Override
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
+            handleContentsChanged();
             setChanged();
+        }
+
+        @Override
+        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot == resultSlot && !simulate) {
+                handleTakeResultSlot(amount);
+            }
+            return super.extractItem(slot, amount, simulate);
         }
     };
 
@@ -33,200 +45,223 @@ public class ExchangeBlockEntity extends BlockEntity implements MenuProvider, Co
         super(BlockEntities.EXCHANGE_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
 
+    private void handleTakeResultSlot(int amount) {
+        System.out.println("handleTakeResultSlot>>>");
+        if (hasTicketOnly()) {
+            shrinkTicket(Utils.getExchangeTicketRatio()[4][0] * amount);
+        } else {
+            shrinkItem();
+        }
+    }
+
+    private void handleContentsChanged() {
+        System.out.println("handleContentsChanged>>>");
+        if (hasTicketOnly()) {
+            int totalTicket = getTotalTicket();
+            int totalResult = Math.floorDiv(totalTicket, Utils.getExchangeTicketRatio()[4][0]);
+            int maxTotalResult = this.container.getSlotLimit(resultSlot);
+
+            if (totalResult == this.container.getStackInSlot(resultSlot).getCount()) {
+                return;
+            }
+
+            if (totalResult > maxTotalResult) {
+                totalResult = maxTotalResult;
+            }
+
+            this.container.setStackInSlot(resultSlot, new ItemStack(Items.LUCKY_BLOCK_ITEM.get(), totalResult));
+
+        } else {
+            int[] rarityCount = getRarityCount();
+            int[] resultTicket = getResulTicket(rarityCount[0], rarityCount[1], rarityCount[2], rarityCount[3], Utils.getExchangeTicketRatio());
+            int tickets = resultTicket[4];
+
+            if (tickets == this.container.getStackInSlot(resultSlot).getCount()) {
+                return;
+            }
+
+            this.container.setStackInSlot(resultSlot, new ItemStack(Items.TICKET_ITEM.get(), tickets));
+        }
+    }
+
+
+    private int[] getResulTicket(int common, int uncommon, int rare, int epic, int[][] ratioTable) {
+        int[] result = new int[5];
+        int tickets = 0;
+
+        // Process common items
+        while (common >= ratioTable[0][0] && tickets < 64) {
+            common -= ratioTable[0][0];
+            tickets += ratioTable[0][1];
+        }
+        result[0] = common;
+
+        // Process uncommon items
+        while (uncommon >= ratioTable[1][0] && tickets < 64) {
+            uncommon -= ratioTable[1][0];
+            tickets += ratioTable[1][1];
+        }
+        result[1] = uncommon;
+
+        // Process rare items
+        while (rare >= ratioTable[2][0] && tickets < 64) {
+            if (tickets + ratioTable[2][1] > 64) {
+                break;
+            }
+            rare -= ratioTable[2][0];
+            tickets += ratioTable[2][1];
+        }
+        result[2] = rare;
+
+        // Process epic items
+        while (epic >= ratioTable[3][0] && tickets < 64) {
+            if (tickets + ratioTable[3][1] > 64) {
+                break;
+            }
+            epic -= ratioTable[3][0];
+            tickets += ratioTable[3][1];
+        }
+        result[3] = epic;
+
+        // Total tickets
+        result[4] = tickets;
+
+        return result;
+    }
+
+    private void shrinkItem() {
+        int[] rarityCount = getRarityCount();
+        int[] resultTicket = getResulTicket(rarityCount[0], rarityCount[1], rarityCount[2], rarityCount[3], Utils.getExchangeTicketRatio());
+        int remainCommon = resultTicket[0];
+        int remainUnCommon = resultTicket[1];
+        int remainRare = resultTicket[2];
+        int remainEpic = resultTicket[3];
+        int needCommon = rarityCount[0] - remainCommon;
+        int needUnCommon = rarityCount[1] - remainUnCommon;
+        int needRare = rarityCount[2] - remainRare;
+        int needEpic = rarityCount[3] - remainEpic;
+
+        shrinkItemHelper(Rarity.COMMON, needCommon);
+        shrinkItemHelper(Rarity.UNCOMMON, needUnCommon);
+        shrinkItemHelper(Rarity.RARE, needRare);
+        shrinkItemHelper(Rarity.EPIC, needEpic);
+
+    }
+
+    // return remain items
+    private void shrinkItemHelper(Rarity rarity, int amount) {
+        int currentAmount = amount;
+        if (amount <= 0)
+            return;
+        for (int i = 0; i < resultSlot; i++) {
+           if (!container.getStackInSlot(i).is(Items.TICKET_ITEM.get()) && container.getStackInSlot(i).getRarity() == rarity){
+               int countInSlot = container.getStackInSlot(i).getCount();
+               if (currentAmount <= 0) return;
+               if (currentAmount > container.getStackInSlot(i).getCount()){
+                   container.getStackInSlot(i).shrink(countInSlot);
+                   currentAmount -= countInSlot;
+               }else{
+                   container.getStackInSlot(i).shrink(currentAmount);
+               }
+           }
+        }
+    }
+
+    private void shrinkTicket(int amount) {
+        int temp = amount;
+        for (int i = 0; i < resultSlot; i++) {
+            if (container.getStackInSlot(i).is(Items.TICKET_ITEM.get())) {
+                ItemStack itemStack = container.getStackInSlot(i);
+                for (int am = temp; am > 0; am--) {
+                    if (temp <= 0) return;
+                    if (itemStack.getCount() > 0)
+                        itemStack.shrink(1);
+                    else {
+                        temp = am;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    private int[] getRarityCount() {
+        int[] arr = new int[4];
+
+        for (int i = 0; i < resultSlot; i++) {
+            if (container.getStackInSlot(i).is(Items.TICKET_ITEM.get()))
+                continue;
+
+            switch (container.getStackInSlot(i).getRarity()) {
+                case EPIC -> {
+                    arr[3]+=container.getStackInSlot(i).getCount();
+                }
+
+                case RARE -> {
+                    arr[2]+=container.getStackInSlot(i).getCount();
+                }
+
+                case UNCOMMON -> {
+                    arr[1]+=container.getStackInSlot(i).getCount();
+                }
+
+                default -> {
+                    arr[0]+=container.getStackInSlot(i).getCount();
+                }
+            }
+        }
+
+        return arr;
+    }
+
+    private int getTotalTicket() {
+        int result = 0;
+        for (int i = 0; i < resultSlot; i++) {
+            if (this.container.getStackInSlot(i).is(Items.TICKET_ITEM.get())) {
+                result += this.container.getStackInSlot(i).getCount();
+            }
+        }
+        return result;
+    }
+
+    private boolean hasTicketOnly() {
+        boolean result = true;
+        for (int i = 0; i < 3; i++) {
+            if (!this.container.getStackInSlot(i).is(Items.TICKET_ITEM.get()) && !this.container.getStackInSlot(i).isEmpty()) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public void load(CompoundTag pTag) {
-        super.load(pTag);
-        itemStackHandler.deserializeNBT(pTag.getCompound("inventory"));
-        DevLog.print(this, "load>>" + pTag);
+        this.container.deserializeNBT(pTag.getCompound("inventory"));
     }
-
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
-        pTag.put("inventory", itemStackHandler.serializeNBT());
-        super.saveAdditional(pTag);
-        DevLog.print(this, "saveAdditional>>" + pTag);
+        pTag.put("inventory", container.serializeNBT());
     }
-
 
     @Override
     public Component getDisplayName() {
         return Component.translatable(Main.MODID.concat(".").concat("exchange_block_entity"));
     }
 
-
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
+        DevLog.print(this, "createMenu>>");
         if (!(pPlayer instanceof ServerPlayer)) {
+            DevLog.print(this, "createMenu>>failed");
             return null;
         }
-        return new ExchangeBlockMenu(pContainerId, pPlayerInventory, this);
+
+        return new ExchangeBlockMenu(pContainerId, pPlayerInventory, this.container, pPlayer);
     }
 
-
-    @Override
-    public int getContainerSize() {
-        return itemStackHandler.getSlots();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return itemStackHandler.getSlots() <= 0;
-    }
-
-    @Override
-    public ItemStack getItem(int pSlot) {
-        return itemStackHandler.getStackInSlot(pSlot);
-    }
-
-    @Override
-    public ItemStack removeItem(int pSlot, int pAmount) {
-        DevLog.print(this, "removeItem>>" + itemStackHandler.getStackInSlot(pSlot));
-        if (pSlot == 0){
-            itemStackHandler.extractItem(1, getItem(1).getCount(), false);
-        } else if (pSlot == 1) {
-            ItemStack inputStack = getItem(0);
-            int count = inputStack.getCount();
-            int countAfterConduct = 0;
-
-            if (inputStack.is(com.huypham.trademe.item.Items.TICKET_ITEM.get())){
-                // 12 item -> 1 coin
-                countAfterConduct = count - (pAmount * 15);
-                //bugs
-                itemStackHandler.setStackInSlot(0, new ItemStack(getItem(0).getItem(), countAfterConduct));
-            }else{
-                switch (inputStack.getItem().getRarity(inputStack)){
-                    case EPIC -> {
-                        // 1 item -> 5 coin
-                        countAfterConduct = count - (pAmount / 5);
-                        itemStackHandler.setStackInSlot(0, new ItemStack(getItem(0).getItem(), countAfterConduct));
-                    }
-
-                    case COMMON -> {
-                        // 12 item -> 1 coin
-                        countAfterConduct = count - (pAmount * 12);
-                        itemStackHandler.setStackInSlot(0, new ItemStack(getItem(0).getItem(), countAfterConduct));
-                    }
-
-                    case UNCOMMON -> {
-                        // 1 item -> 1 coin
-                        countAfterConduct = count - (pAmount);
-                        itemStackHandler.setStackInSlot(0, new ItemStack(getItem(0).getItem(), countAfterConduct));
-                    }
-
-                    case RARE -> {
-                        // 1 item -> 2 coin
-                        countAfterConduct = count - (pAmount / 2);
-                        itemStackHandler.setStackInSlot(0, new ItemStack(getItem(0).getItem(), countAfterConduct));
-                    }
-
-                    default -> {
-                        setItem(0, ItemStack.EMPTY);
-                    }
-                }
-            }
-        }
-
-        return itemStackHandler.extractItem(pSlot, pAmount, false);
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int pSlot) {
-        DevLog.print(this, "removeItemNoUpdate>>" + pSlot);
-        return itemStackHandler.extractItem(pSlot, itemStackHandler.getStackInSlot(pSlot).getCount(), true);
-    }
-
-    @Override
-    public void setItem(int pSlot, ItemStack pStack) {
-        DevLog.print(this, "setItem:slot>>" + pSlot + "stack>>" + pStack);
-        if (!pStack.isEmpty()) { // Removing should be ignored
-            pStack = handleExchangeItem(pSlot, pStack);
-        }
-        itemStackHandler.setStackInSlot(pSlot, pStack);
-    }
-
-    @Override
-    public boolean stillValid(Player pPlayer) {
-        return true;
-    }
-
-    @Override
-    public void clearContent() {
-        DevLog.print(this, "clearContent>>");
-        removeItem(0, getItem(0).getCount());
-        removeItem(1, getItem(1).getCount());
-    }
-
-    private ItemStack handleExchangeItem(int pSlot, ItemStack pStack) {
-        ItemStack temp = pStack.copyAndClear();
-
-        if (pSlot == 0) {
-            if (
-                    !temp.is(Items.DIRT) &&
-                            !temp.is(Items.GRASS) &&
-                            !temp.is(Items.GRASS_BLOCK) &&
-                            !temp.is(Items.COBBLESTONE) &&
-                            !temp.is(Items.SAND)
-            ) {
-                int count = temp.getCount();
-                int returnCount = 0;
-
-                if (temp.is(com.huypham.trademe.item.Items.TICKET_ITEM.get())){
-                    // 12 item -> 1 coin
-                    returnCount = Math.floorDiv(count, 15);
-                    System.out.println("return count>>" + returnCount);
-                    if (returnCount >= MAX_STACK) {
-                        returnCount = MAX_STACK - Math.floorMod(MAX_STACK, 15);
-                    }
-                    setItem(1, new ItemStack(com.huypham.trademe.item.Items.LUCKY_BLOCK_ITEM.get(), returnCount));
-                }else{
-                    switch (temp.getItem().getRarity(temp)) {
-                        case EPIC -> {
-                            // 1 item -> 5 coin
-                            returnCount = count * 5;
-                            if (returnCount >= MAX_STACK) {
-                                returnCount = MAX_STACK - Math.floorMod(MAX_STACK, 5);
-                            }
-                            setItem(1, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), returnCount));
-                        }
-
-                        case COMMON -> {
-                            // 12 item -> 1 coin
-                            returnCount = Math.floorDiv(count, 12);
-                            System.out.println("return count>>" + returnCount);
-                            if (returnCount >= MAX_STACK) {
-                                returnCount = MAX_STACK - Math.floorMod(MAX_STACK, 12);
-                            }
-                            setItem(1, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), returnCount));
-                        }
-
-                        case UNCOMMON -> {
-                            // 1 item -> 1 coin
-                            returnCount = count;
-                            if (returnCount >= MAX_STACK) {
-                                returnCount = MAX_STACK - Math.floorMod(MAX_STACK, 1);
-                            }
-                            setItem(1, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), returnCount));
-                        }
-
-                        case RARE -> {
-                            // 1 item -> 2 coin
-                            returnCount = count * 2;
-                            if (returnCount >= MAX_STACK) {
-                                returnCount = MAX_STACK - Math.floorMod(MAX_STACK, 2);
-                            }
-                            setItem(1, new ItemStack(com.huypham.trademe.item.Items.TICKET_ITEM.get(), returnCount));
-                        }
-
-                        default -> {
-                            setItem(1, ItemStack.EMPTY);
-                        }
-                    }
-                }
-            }
-        }
-        return temp;
-    }
 }

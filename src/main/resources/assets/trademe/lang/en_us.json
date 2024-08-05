@@ -21,5 +21,9 @@
 
   "effect.trademe.message.mark_of_death": "Mark Of Death",
 
-  "enchantment.trademe.mark_of_death_enchantment": "Mark Of Death Enchantment"
+  "enchantment.trademe.mark_of_death_enchantment": "Mark Of Death Enchantment",
+
+  "server.trademe.has_config_change": "§e§oServer has changed configs, UI changes may be not update correctly!§r",
+
+  "tradme.ratio.info" : "Exchange ratio"
 }

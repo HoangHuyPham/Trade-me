@@ -1,7 +1,6 @@
 package com.huypham.trademe.enchantment;
 
 import com.huypham.trademe.Main;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
