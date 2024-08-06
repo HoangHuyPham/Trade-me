@@ -46,7 +46,7 @@ public class ExchangeBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private void handleTakeResultSlot(int amount) {
-        System.out.println("handleTakeResultSlot>>>");
+//        System.out.println("handleTakeResultSlot>>>");
         if (hasTicketOnly()) {
             shrinkTicket(Utils.getExchangeTicketRatio()[4][0] * amount);
         } else {
@@ -154,16 +154,16 @@ public class ExchangeBlockEntity extends BlockEntity implements MenuProvider {
         if (amount <= 0)
             return;
         for (int i = 0; i < resultSlot; i++) {
-           if (!container.getStackInSlot(i).is(Items.TICKET_ITEM.get()) && container.getStackInSlot(i).getRarity() == rarity){
-               int countInSlot = container.getStackInSlot(i).getCount();
-               if (currentAmount <= 0) return;
-               if (currentAmount > container.getStackInSlot(i).getCount()){
-                   container.getStackInSlot(i).shrink(countInSlot);
-                   currentAmount -= countInSlot;
-               }else{
-                   container.getStackInSlot(i).shrink(currentAmount);
-               }
-           }
+            if (!container.getStackInSlot(i).is(Items.TICKET_ITEM.get()) && container.getStackInSlot(i).getRarity() == rarity){
+                int countInSlot = container.getStackInSlot(i).getCount();
+                if (currentAmount <= 0) return;
+                if (currentAmount > container.getStackInSlot(i).getCount()){
+                    container.getStackInSlot(i).shrink(countInSlot);
+                    currentAmount -= countInSlot;
+                }else{
+                    container.getStackInSlot(i).shrink(currentAmount);
+                }
+            }
         }
     }
 
@@ -261,7 +261,7 @@ public class ExchangeBlockEntity extends BlockEntity implements MenuProvider {
             return null;
         }
 
-        return new ExchangeBlockMenu(pContainerId, pPlayerInventory, this.container, pPlayer);
+        return new ExchangeBlockMenu(pContainerId, pPlayerInventory, this.container);
     }
 
 }

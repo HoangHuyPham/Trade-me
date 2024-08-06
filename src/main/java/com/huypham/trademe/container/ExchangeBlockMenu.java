@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -22,10 +23,10 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
     final int[][] exchangeTicketRatio;
 
     public ExchangeBlockMenu(int containerId, Inventory playerInv) {
-        this(containerId, playerInv, new ItemStackHandler(4), null);
+        this(containerId, playerInv, new ItemStackHandler(4));
     }
 
-    public ExchangeBlockMenu(int containerId, Inventory playerInv, ItemStackHandler container, Player player) {
+    public ExchangeBlockMenu(int containerId, Inventory playerInv, ItemStackHandler container) {
         super(MenuTypes.EXCHANGE_BLOCK_MENU.get(), containerId);
 
         this.exchangeTicketRatio = Utils.getExchangeTicketRatio();
@@ -55,7 +56,13 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
 
 
         // container this
-        addSlot(new SlotItemHandler(container, 0, 37 + 1, 20 + 1));
+        addSlot(new SlotItemHandler(container, 0, 37 + 1, 20 + 1){
+            @Override
+            public void set(@NotNull ItemStack stack) {
+
+                super.set(stack);
+            }
+        });
         addSlot(new SlotItemHandler(container, 1, 55 + 1, 20 + 1));
         addSlot(new SlotItemHandler(container, 2, 73 + 1, 20 + 1));
         addSlot(new SlotItemHandler(container, 3, 127 + 1, 20 + 1) {
@@ -220,6 +227,7 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
                     break;
                 }
 
+                //from inventory
                 Slot slot = this.slots.get(i);
                 ItemStack itemstack = slot.getItem();
                 if (!itemstack.isEmpty() && ItemStack.isSameItemSameTags(pStack, itemstack)) {
@@ -228,12 +236,13 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
                     if (j <= maxSize) {
                         pStack.setCount(0);
                         itemstack.setCount(j);
-                        slot.setChanged();
+                        slot.setByPlayer(itemstack);
                         flag = true;
+
                     } else if (itemstack.getCount() < maxSize) {
                         pStack.shrink(maxSize - itemstack.getCount());
                         itemstack.setCount(maxSize);
-                        slot.setChanged();
+                        slot.setByPlayer(itemstack);
                         flag = true;
                     }
                 }
@@ -291,6 +300,8 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
                 }
             }
         }
+
+
 
         return flag;
     }
