@@ -94,7 +94,6 @@ public class Main {
     }
 
     void onModConfigEventReloading(ModConfigEvent.Reloading event) {
-        System.out.println("fire>>>");
         if (server != null && event.getConfig().getSpec() == TradeMeConfig.SERVER_SPEC){
             for (ServerPlayer player: server.getPlayerList().getPlayers()){
                 player.sendSystemMessage(Component.translatable("server.trademe.has_config_change"));

@@ -70,10 +70,26 @@ public class TradeMeConfig {
         builder.comment("Left number is number of common items need to exchange into ticket (right number)");
         builder.comment("Example [12, 1]; 12 is left number, 1 is right number");
 
-        exchangeCommon = builder.define("Common", List.of(12, 1));
-        exchangeUnCommon = builder.define("Uncommon", List.of(1, 1));
-        exchangeRare = builder.define("Rare", List.of(1, 2));
-        exchangeEpic = builder.define("Epic", List.of(1, 5));
+        ArrayList<Integer> commonRatio = new ArrayList<>();
+        commonRatio.add(12);
+        commonRatio.add(1);
+
+        ArrayList<Integer> unCommonRatio = new ArrayList<>();
+        unCommonRatio.add(1);
+        unCommonRatio.add(1);
+
+        ArrayList<Integer> rareRatio = new ArrayList<>();
+        rareRatio.add(1);
+        rareRatio.add(2);
+
+        ArrayList<Integer> epicRatio = new ArrayList<>();
+        epicRatio.add(1);
+        epicRatio.add(5);
+
+        exchangeCommon = builder.define("Common", commonRatio);
+        exchangeUnCommon = builder.define("Uncommon", unCommonRatio);
+        exchangeRare = builder.define("Rare", rareRatio);
+        exchangeEpic = builder.define("Epic", epicRatio);
 
         builder.comment("This is number of ticket to exchange into lucky block");
         exchangeTicket = builder.defineInRange("Ticket", 15, 1, 64);
