@@ -168,18 +168,18 @@ public class ExchangeBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private void shrinkTicket(int amount) {
-        int temp = amount;
+        int currentAmount = amount;
+        if (amount <= 0)
+            return;
         for (int i = 0; i < resultSlot; i++) {
             if (container.getStackInSlot(i).is(Items.TICKET_ITEM.get())) {
-                ItemStack itemStack = container.getStackInSlot(i);
-                for (int am = temp; am > 0; am--) {
-                    if (temp <= 0) return;
-                    if (itemStack.getCount() > 0)
-                        itemStack.shrink(1);
-                    else {
-                        temp = am;
-                        break;
-                    }
+                int countInSlot = container.getStackInSlot(i).getCount();
+                if (currentAmount <= 0) return;
+                if (currentAmount > container.getStackInSlot(i).getCount()){
+                    container.getStackInSlot(i).shrink(countInSlot);
+                    currentAmount -= countInSlot;
+                }else{
+                    container.getStackInSlot(i).shrink(currentAmount);
                 }
             }
         }
