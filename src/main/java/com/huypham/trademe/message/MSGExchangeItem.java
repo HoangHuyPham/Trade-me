@@ -5,9 +5,11 @@ import com.huypham.trademe.helper.Utils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -30,19 +32,51 @@ public class MSGExchangeItem {
     }
 
     private static void handleTrade(ItemStack need, ItemStack result, Inventory inventory){
-        int slot = inventory.findSlotMatchingItem(need);
-        int count = inventory.getItem(slot).getCount();
-        int needCount = need.getCount();
 
-        if (inventory.contains(need)){
+        int needCount = need.getCount();
+        int temp = needCount;
+
+        if (getSizeAllSlotMatch(need, inventory) >= needCount){
             if (inventory.getFreeSlot() > 0){
-                if (count >= needCount){
-                    inventory.removeItem(slot, needCount);
-                    inventory.add(result);
+                for (int i: findAllSlotMatch(need, inventory)){
+                    if (temp <= 0)
+                        break;
+
+                    int count = inventory.getItem(i).getCount();
+
+                    if (temp <= count){
+                        inventory.removeItem(i, temp);
+                        temp -= temp;
+                    }else{
+                        inventory.removeItem(i, count);
+                        temp -= count;
+                    }
                 }
+
+                inventory.add(result);
             }
         }
 
+    }
+
+    private static List<Integer> findAllSlotMatch(ItemStack itemStack, Inventory inventory){
+        List<Integer> all = new ArrayList<>();
+        for(int i = 0; i < inventory.items.size(); ++i) {
+            if (!inventory.items.get(i).isEmpty() && ItemStack.isSameItemSameTags(itemStack, inventory.items.get(i))) {
+                all.add(i);
+            }
+        }
+        return all;
+    }
+
+    private static int getSizeAllSlotMatch(ItemStack itemStack, Inventory inventory){
+        int size = 0;
+        for(int i = 0; i < inventory.items.size(); ++i) {
+            if (!inventory.items.get(i).isEmpty() && ItemStack.isSameItemSameTags(itemStack, inventory.items.get(i))) {
+                size += inventory.items.get(i).getCount();
+            }
+        }
+        return size;
     }
 
 
