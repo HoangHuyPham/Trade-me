@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
@@ -94,7 +95,17 @@ public class LuckyBlock extends Block {
         nonProtectEnchantments.add(Enchantments.UNBREAKING);
         nonProtectEnchantments.add(Enchantments.IMPALING);
         nonProtectEnchantments.add(Enchantments.FISHING_LUCK);
+        nonProtectEnchantments.add(Enchantments.FALL_PROTECTION);
+        nonProtectEnchantments.add(Enchantments.DEPTH_STRIDER);
+        nonProtectEnchantments.add(Enchantments.SWIFT_SNEAK);
+        nonProtectEnchantments.add(Enchantments.RESPIRATION);
+        nonProtectEnchantments.add(Enchantments.FLAMING_ARROWS);
+        nonProtectEnchantments.add(Enchantments.PUNCH_ARROWS);
+        nonProtectEnchantments.add(Enchantments.CHANNELING);
+
+
         nonProtectEnchantments.add(com.huypham.trademe.enchantment.Enchantments.MARK_OF_DEATH_ENCHANTMENT.get());
+        nonProtectEnchantments.add(com.huypham.trademe.enchantment.Enchantments.INFINITY_FIREWORK_ENCHANTMENT.get());
         Random rd = new Random();
         if (rd.nextInt(1, 11) == 4){
             list.add(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(nonProtectEnchantments.get(rd.nextInt(nonProtectEnchantments.size())), rd.nextInt(6, 11))));
