@@ -24,6 +24,7 @@ public class Tabs {
                         output.accept(Items.TICKET_ITEM.get());
                         output.accept(Items.LUCKY_BLOCK_ITEM.get());
                         output.accept(Items.ANVIL_REVAMP_BLOCK_ITEM.get());
+                        output.accept(Items.MYSTIC_BOW_ITEM.get());
                         output.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(Enchantments.MARK_OF_DEATH_ENCHANTMENT.get(), 1)));
                         output.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(Enchantments.MARK_OF_DEATH_ENCHANTMENT.get(), 2)));
                         output.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(Enchantments.MARK_OF_DEATH_ENCHANTMENT.get(), 3)));

@@ -1,0 +1,7 @@
+{
+    "parent": "trademe:item/mystic_bow",
+    "size": [16, 16],
+    "textures": {
+        "layer0": "trademe:item/mystic_bow_pulling_1"
+    }
+}

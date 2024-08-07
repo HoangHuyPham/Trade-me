@@ -8,6 +8,7 @@ import com.huypham.trademe.config.TradeMeConfig;
 import com.huypham.trademe.container.MenuTypes;
 import com.huypham.trademe.effect.Effects;
 import com.huypham.trademe.enchantment.Enchantments;
+import com.huypham.trademe.helper.CustomItemProperties;
 import com.huypham.trademe.helper.DevLog;
 import com.huypham.trademe.item.Items;
 import com.huypham.trademe.message.MSGExchangeItem;
@@ -131,6 +132,7 @@ public class Main {
                     () -> {
                         MenuScreens.register(MenuTypes.EXCHANGE_BLOCK_MENU.get(), ExchangeBlockScreen::new);
                         MenuScreens.register(MenuTypes.ANVIL_REVAMP_BLOCK_MENU.get(), AnvilRevampScreen::new);
+                        CustomItemProperties.register();
                     }
             );
         }

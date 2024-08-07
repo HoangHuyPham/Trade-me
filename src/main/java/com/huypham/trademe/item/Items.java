@@ -2,6 +2,7 @@ package com.huypham.trademe.item;
 
 import com.huypham.trademe.Main;
 import com.huypham.trademe.block.custom.Blocks;
+import com.huypham.trademe.item.bow.MysticBowItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
@@ -40,6 +41,16 @@ public class Items {
             pTooltip.add(Component.translatable("item.trademe.anvil_revamp_block.tooltip"));
             super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
         }
+    });
+
+    public static final RegistryObject<Item> MYSTIC_BOW_ITEM = ITEMS.register("mystic_bow", ()->new MysticBowItem((new Item.Properties()).durability(384).rarity(Rarity.UNCOMMON)){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+            pTooltip.add(Component.translatable("item.trademe.mystic_bow.tooltip"));
+            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+        }
+
+
     });
 
 
