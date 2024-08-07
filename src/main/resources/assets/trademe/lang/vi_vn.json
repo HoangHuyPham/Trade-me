@@ -23,9 +23,19 @@
 
   "item.trademe.mystic_bow.tooltip": "1 cây cung thần bí, có thể dùng để bắn pháo hoa",
 
+  "item.trademe.mystic_core_inactive": "Lõi bí ẩn (không hoạt động)",
+
+  "item.trademe.mystic_core_active": "Lõi bí ẩn",
+
+  "item.trademe.mystic_core_inactive.tooltip": "1 lõi bí ẩn không hoạt động",
+
+  "item.trademe.mystic_core_active.tooltip": "1 lõi bí ẩn hoạt động",
+
   "potion.effect.message.mark_of_death": "Dấu ấn tử thần",
 
   "enchantment.trademe.mark_of_death_enchantment": "Phù phép dấu ấn tử thần",
+
+  "enchantment.trademe.infinity_firework_enchantment": "Phù phép vô tận pháo hoa",
 
   "server.trademe.has_config_change": "§e§oServer vừa thay đổi cấu hình gần đây, thay đổi UI có thể chưa được cập nhật chính xác!§r",
 

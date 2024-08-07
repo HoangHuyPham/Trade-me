@@ -53,6 +53,22 @@ public class Items {
 
     });
 
+    public static final RegistryObject<Item> MYSTIC_CORE_ACTIVE_ITEM = ITEMS.register("mystic_core_active", ()->new Item(new Item.Properties().rarity(Rarity.UNCOMMON)){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+            pTooltip.add(Component.translatable("item.trademe.mystic_core_active.tooltip"));
+            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+        }
+    }) ;
+
+    public static final RegistryObject<Item> MYSTIC_CORE_INACTIVE_ITEM = ITEMS.register("mystic_core_inactive", ()->new Item(new Item.Properties().rarity(Rarity.COMMON)){
+        @Override
+        public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+            pTooltip.add(Component.translatable("item.trademe.mystic_core_inactive.tooltip"));
+            super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+        }
+    }) ;
+
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

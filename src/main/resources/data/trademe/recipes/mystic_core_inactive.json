@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "result": {
+    "item": "trademe:mystic_core_inactive",
+    "count": 1
+  }
+}

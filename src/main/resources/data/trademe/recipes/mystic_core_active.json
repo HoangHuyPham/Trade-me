@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#G#",
+    " K "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:nether_star"
+    },
+    "G": {
+      "item": "minecraft:gunpowder"
+    },
+    "K": {
+      "item": "trademe:mystic_core_inactive"
+    }
+  },
+  "result": {
+    "item": "trademe:mystic_core_active",
+    "count": 1
+  }
+}

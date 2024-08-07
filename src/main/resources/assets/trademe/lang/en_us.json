@@ -23,9 +23,19 @@
 
   "item.trademe.mystic_bow.tooltip": "A mystic bow, can use it to shoot firework",
 
+  "item.trademe.mystic_core_inactive": "A mystic core (inactive)",
+
+  "item.trademe.mystic_core_active": "A mystic core",
+
+  "item.trademe.mystic_core_inactive.tooltip": "A mystic core but its not active",
+
+  "item.trademe.mystic_core_active.tooltip": "A mystic active core",
+
   "effect.trademe.message.mark_of_death": "Mark Of Death",
 
   "enchantment.trademe.mark_of_death_enchantment": "Mark Of Death Enchantment",
+
+  "enchantment.trademe.infinity_firework_enchantment": "Infinity Firework Enchantment",
 
   "server.trademe.has_config_change": "§e§oServer has changed configs, UI changes may be not update correctly!§r",
 

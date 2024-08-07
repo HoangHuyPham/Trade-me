@@ -12,6 +12,8 @@ public class Enchantments {
 
     public static final RegistryObject<Enchantment> MARK_OF_DEATH_ENCHANTMENT = ENCHANTMENTS.register("mark_of_death_enchantment", MarkOfDeathEnchantment::new);
 
+    public static final RegistryObject<Enchantment> INFINITY_FIREWORK_ENCHANTMENT = ENCHANTMENTS.register("infinity_firework_enchantment", InfinityFireworkEnchantment::new);
+
     public static void register(IEventBus eventBus) {
         ENCHANTMENTS.register(eventBus);
     }

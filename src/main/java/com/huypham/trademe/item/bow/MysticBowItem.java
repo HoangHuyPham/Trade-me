@@ -42,7 +42,7 @@ public class MysticBowItem extends ProjectileWeaponItem implements Vanishable {
 
                 float f = getPowerForTime(i);
                 if (!((double) f < 0.1D)) {
-                    boolean flag1 = player.getAbilities().instabuild || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, pStack, player));
+                    boolean flag1 = player.getAbilities().instabuild || (itemstack.getItem() instanceof FireworkRocketItem && EnchantmentHelper.getItemEnchantmentLevel(com.huypham.trademe.enchantment.Enchantments.INFINITY_FIREWORK_ENCHANTMENT.get(), pStack) > 0) || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, pStack, player));
                     if (!pLevel.isClientSide) {
                         Projectile projectile;
 
