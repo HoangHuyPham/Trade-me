@@ -49,7 +49,7 @@ public class ExchangeBlockMenu extends AbstractContainerMenu {
         addSlot(new SlotView(virtualTrade[1], 1, 18 + 48, 46 + 26));
 
         addSlot(new SlotView(virtualTrade[2], 0, 98, 46));
-        addSlot(new SlotView(virtualTrade[3], 1, 98 + 48, 46));
+        addSlot(new SlotView(virtualTrade[2], 1, 98 + 48, 46));
 
         addSlot(new SlotView(virtualTrade[3], 0, 98, 46 + 26));
         addSlot(new SlotView(virtualTrade[3], 1, 98 + 48, 46 + 26));
