@@ -1,12 +1,16 @@
 package com.huypham.trademe.enchantment;
 
 import com.huypham.trademe.effect.Effects;
+import net.minecraft.commands.arguments.CompoundTagArgument;
+import net.minecraft.nbt.*;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraftforge.common.Tags;
 
 public class MarkOfDeathEnchantment extends Enchantment {
 
@@ -21,7 +25,14 @@ public class MarkOfDeathEnchantment extends Enchantment {
             if (pTarget instanceof LivingEntity){
                 LivingEntity target = (LivingEntity) pTarget;
                 if (!target.hasEffect(Effects.MARK_OF_DEATH.get())){
-                    target.addEffect(new MobEffectInstance(Effects.MARK_OF_DEATH.get(), 20 * second, pLevel-1));
+                    try {
+                        if (pAttacker instanceof Player)
+                            target.getPersistentData().putString("entity_source",  pAttacker.getStringUUID());
+                    }catch (Exception e){
+                        System.err.print(e);
+                    }
+
+                    target.addEffect(new MobEffectInstance(Effects.MARK_OF_DEATH.get(), 20 * second, pLevel-1), pAttacker);
                 }
             }
         }

@@ -30,6 +30,7 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -43,6 +44,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -63,7 +65,6 @@ public class Main {
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
-    private static MinecraftServer server;
 
     public Main() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -95,8 +96,8 @@ public class Main {
     }
 
     void onModConfigEventReloading(ModConfigEvent.Reloading event) {
-        if (server != null && event.getConfig().getSpec() == TradeMeConfig.SERVER_SPEC){
-            for (ServerPlayer player: server.getPlayerList().getPlayers()){
+        if (event.getConfig().getSpec() == TradeMeConfig.SERVER_SPEC){
+            for (ServerPlayer player: ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()){
                 player.sendSystemMessage(Component.translatable("server.trademe.has_config_change"));
             }
         }
@@ -105,7 +106,7 @@ public class Main {
 
     @SubscribeEvent
     void onFMLLoadCompleteEvent(ServerStartedEvent event) {
-        server = event.getServer();
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM));
         var items0 = ITEM_REGISTRY.put(0, server.registryAccess().registryOrThrow(Registries.ITEM)).keySet().toArray(new ResourceLocation[0]);
         for (var item : items0) {
@@ -118,6 +119,11 @@ public class Main {
     @SubscribeEvent
     public void hi(PlayerInteractEvent.RightClickBlock event) {
 
+    }
+
+    @SubscribeEvent
+    public void hi(LivingAttackEvent event) {
+        System.out.println("entity>>>>>"+event.getEntity().getPersistentData());
     }
 
 
