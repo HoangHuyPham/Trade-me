@@ -81,7 +81,6 @@ public class Main {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, TradeMeConfig.SERVER_SPEC, "trademe-server.toml");
 
         modEventBus.addListener(this::onSetup);
-        modEventBus.addListener(this::onModConfigEventReloading);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -93,14 +92,6 @@ public class Main {
     void onSetup(FMLCommonSetupEvent event) {
         MAIN_NETWORK.registerMessage(packetsRegistered++, MSGExchangeItem.class, MSGExchangeItem::encode, MSGExchangeItem::decode, MSGExchangeItem::handle);
         DevLog.print(this, "All messages is registered");
-    }
-
-    void onModConfigEventReloading(ModConfigEvent.Reloading event) {
-        if (event.getConfig().getSpec() == TradeMeConfig.SERVER_SPEC){
-            for (ServerPlayer player: ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()){
-                player.sendSystemMessage(Component.translatable("server.trademe.has_config_change"));
-            }
-        }
     }
 
 
@@ -119,11 +110,6 @@ public class Main {
     @SubscribeEvent
     public void hi(PlayerInteractEvent.RightClickBlock event) {
 
-    }
-
-    @SubscribeEvent
-    public void hi(LivingAttackEvent event) {
-        System.out.println("entity>>>>>"+event.getEntity().getPersistentData());
     }
 
 
