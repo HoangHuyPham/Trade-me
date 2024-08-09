@@ -1,5 +1,6 @@
 package com.huypham.trademe.effect;
 
+import com.huypham.trademe.helper.DevLog;
 import com.huypham.trademe.model.MarkOfDeathData;
 import com.huypham.trademe.particle.Particles;
 import com.huypham.trademe.sound.Sounds;
@@ -55,7 +56,15 @@ public class MarkOfDeathEffect extends MobEffect {
 
         if (this.lastTick <= 1){
             float storeBonusDamage = store.get(pLivingEntity).getBonusDamage();
-            LivingEntity source = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(UUID.fromString(pLivingEntity.getPersistentData().getString("entity_source")));
+            UUID uuid = null;
+            LivingEntity source = null;
+            try {
+                uuid = UUID.fromString(pLivingEntity.getPersistentData().getString("entity_source"));
+                source = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
+            }catch (Exception e){
+                DevLog.print(this, "Unknown damage source (may be is command)");
+            }
+
 
             if (pLivingEntity.getHealth() <= store.get(pLivingEntity).getBonusDamage()){
                 store.remove(pLivingEntity);
